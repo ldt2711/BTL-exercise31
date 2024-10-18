@@ -1,3 +1,5 @@
+#ifndef _NODE_CPP
+#define _NODE_CPP 1
 #include <iostream>
 using namespace std;
 
@@ -21,3 +23,5 @@ public:
 	node<T> *getNext() {return next;}
 	node<T> *getPrev() {return prev;}
 };
+
+#endif

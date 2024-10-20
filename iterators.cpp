@@ -14,7 +14,7 @@ public:
 	void setCur(node<T> *c) {cur=c;}
 	node<T> *getCur() {return cur;}
 	T &operator*() {return cur->getElem();}
-	bool &operator!=(dl_ite<T> it) {return cur!=it.cur;}
+	bool operator!=(dl_ite<T> it) {return cur!=it.cur;}
 	dl_ite<T> operator++(int)
 	{
 		cur = cur->getNext();

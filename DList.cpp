@@ -22,7 +22,7 @@ public:
 	dlist() {head=trail=0; n=0;}
 	~dlist()
 	{
-		//while(n) pop_front();
+		while(n) pop_front();
 	}
 	void setHead(node<Q> *H) {head=H;}
 	node<Q> *getHead() {return head;}
@@ -93,15 +93,32 @@ public:
 	}
 	void erase(iterator it)
 	{
-		
+		if(it.getCur()==head) return pop_front();
+		if(it.getCur()==trail) return pop_back();
+		node<Q> *p = it.getCur()->getPrev(), *j = it.getCur()->getNext();
+		p->setNext(j); j->setPrev(p);
+		delete it.getCur();
+		n--;
 	}
 	void sort(bool tang=true)
 	{
-
+		for(node<Q> *p=head; p!=0; p=p->getNext())
+			for(node<Q> *j=p->getNext(); j!=0; j=j->getNext()){
+				if(tang){
+					if(p->getElem()>j->getElem())
+						swap(p,j);
+				}
+				else{
+					if(p->getElem()<j->getElem())
+						swap(p,j);
+				}
+			}
 	}
-	void travel() // xuat
+	void swap(node<Q> *p, node<Q> *j)
 	{
-		for(node<Q>*p=head;p;p=p->getNext()) cout<<p->getElem()<<" ";
+		Q t = p->getElem();
+		p->setElem(j->getElem());
+		j->setElem(t);
 	}
 };
 #endif

@@ -4,6 +4,8 @@
 #include "node.cpp"
 #include "iterators.cpp"
 #include <iostream>
+#include <map>
+#include <algorithm>
 using namespace std;
 
 template<class Q>
@@ -13,12 +15,15 @@ private:
 	node<Q> *head, *trail;
 	long n;
 public:
+	// bo lap xuoi
 	typedef dl_ite<Q> iterator;
 	iterator begin() {return head;}
 	iterator end() {return NULL;}
+	// bo lap nguoc
 	typedef dl_rite<Q> reverse_iterator;
 	reverse_iterator rbegin() {return NULL;}
 	reverse_iterator rend() {return head;}
+
 	dlist() {head=trail=0; n=0;}
 	~dlist()
 	{
@@ -39,9 +44,8 @@ public:
 	{
 		if(n==0) head=trail= new node<Q>(x);
 		else{
-			node<Q> *N = new node<Q>(x,head);
-			head->setPrev(N);
-			head = N;
+			head = new node<Q>(x,head);
+			head->getNext()->setPrev(head);
 		}
 		n++;
 	}
@@ -50,36 +54,30 @@ public:
 	{
 		if(n==0) head=trail= new node<Q>(x);
 		else{
-			node<Q> *N = new node<Q>(x,0,trail);
-			trail->setNext(N);
-			trail = N;
+			trail = new node<Q>(x,0,trail);
+			trail->getPrev()->setNext(trail);
 		}
 		n++;
 	}
 	// create temp node = head -> head = next of head -> prev of head = null -> delete temp
 	void pop_front()
 	{
-		if(n!=0){
-			node<Q> *t = head;
-			head = head->getNext();
-			head->setPrev(0);
-			delete t;
-			n--;
-			if(n==0) trail=0;
-		}
+		node<Q> *t = head;
+		head = head->getNext();
+		if(head) head->setPrev(0);
+		delete t;
+		n--;
+		if(n==0) trail=0;
 	}
 	// traverse to the second-to-last node ->  next of that node = null -> delete trail -> let trail = that node
 	void pop_back()
 	{
-		if(n==1) return pop_front();
-		else if(n>1){
-			node<Q> *t = head;
-			while(t!=trail->getNext()) t=t->getNext();
-			t->setNext(0);
-			delete trail;
-			trail = t;
-			n--;
-		}
+		node<Q> *t = trail;
+		trail = trail->getPrev();
+		if(trail) trail->setNext(0);
+		delete t;
+		n--;
+		if(n==0) head=0;
 	}
 	// let prev current node = new node with: prev = prev current node, next = current node
 	void insert(iterator it, Q x)
@@ -96,29 +94,16 @@ public:
 		if(it.getCur()==head) return pop_front();
 		if(it.getCur()==trail) return pop_back();
 		node<Q> *p = it.getCur()->getPrev(), *j = it.getCur()->getNext();
-		p->setNext(j); j->setPrev(p);
+		p->setNext(j);
+		j->setPrev(p);
 		delete it.getCur();
 		n--;
 	}
-	void sort(bool tang=true)
+	void sort(bool (*cmp)(const Q&, const Q&) = less<Q>())
 	{
 		for(node<Q> *p=head; p!=0; p=p->getNext())
-			for(node<Q> *j=p->getNext(); j!=0; j=j->getNext()){
-				if(tang){
-					if(p->getElem()>j->getElem())
-						swap(p,j);
-				}
-				else{
-					if(p->getElem()<j->getElem())
-						swap(p,j);
-				}
-			}
-	}
-	void swap(node<Q> *p, node<Q> *j)
-	{
-		Q t = p->getElem();
-		p->setElem(j->getElem());
-		j->setElem(t);
+			for(node<Q> *j=p->getNext(); j!=0; j=j->getNext())
+				if(cmp(j->getElem(),p->getElem())) swap(j->getElem(),p->getElem());
 	}
 };
 #endif

@@ -1,13 +1,63 @@
 #ifndef DLIST_CPP
 #define DLIST_CPP 1
 
-#include "node.cpp"
-#include "iterators.cpp"
 #include <iostream>
 #include <map>
 #include <algorithm>
 using namespace std;
 
+template<class T>
+class node
+{
+private:
+	T elem;
+	node *next, *prev;
+public:
+	node(T e=0, node<T> *N=0, node<T> *P=0)
+	{
+		elem = e;
+		next = N;
+		prev = P;
+	}
+	void setElem(T e) {elem = e;}
+	void setNext(node<T> *N) {next = N;}
+	void setPrev(node<T> *P) {prev = P;}
+	T &getElem() {return elem;}
+	node<T> *getNext() {return next;}
+	node<T> *getPrev() {return prev;}
+	bool operator>(const node<T> &other) const
+	{
+		return getElem() > other.getElem();
+	}
+	bool operator<(const node<T> &other) const
+	{
+		return getElem() < other.getElem();
+	}
+};
+
+template<class T>
+class dl_ite
+{
+private:
+	node<T> *cur;
+public:
+	dl_ite(node<T> *c=0) {cur=c;}
+	void setCur(node<T> *c) {cur=c;}
+	node<T> *getCur() {return cur;}
+	T &operator*() {return cur->getElem();}
+	bool operator!=(dl_ite<T> it) {return cur!=it.cur;}
+	dl_ite<T> operator++(int)
+	{
+		cur = cur->getNext();
+		return cur;
+	}
+	dl_ite<T> operator++()
+	{
+		dl_ite<T> it = cur;
+		cur = cur->getNext();
+		return it;
+	}
+};
 template<class Q>
 class dlist
 {
@@ -19,10 +69,6 @@ public:
 	typedef dl_ite<Q> iterator;
 	iterator begin() {return head;}
 	iterator end() {return NULL;}
-	// bo lap nguoc
-	typedef dl_rite<Q> reverse_iterator;
-	reverse_iterator rbegin() {return NULL;}
-	reverse_iterator rend() {return head;}
 
 	dlist() {head=trail=0; n=0;}
 	~dlist()
@@ -98,6 +144,12 @@ public:
 		j->setPrev(p);
 		delete it.getCur();
 		n--;
+	}
+	void clear()
+	{
+		while (!empty()) {
+        	pop_front();
+    	}
 	}
 	void sort(bool (*cmp)(const Q&, const Q&) = less<Q>())
 	{

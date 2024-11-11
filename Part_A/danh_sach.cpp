@@ -34,6 +34,43 @@ public:
 		}
 		return -1;
 	}
+	void addHS()
+	{
+		hs b;
+		cout<<"\nNhap thong tin hoc sinh\n";
+		cin>>b;
+		l.push_back(b);
+	}
+	void updateById(string id)
+	{
+		int idx;
+		idx = findById(id);
+		if(idx==-1) cout<<"\nKhong co thong tin hoc sinh can tim!";
+		else
+		{
+			cout<<"\nHay nhap thong tin cap nhat\n";
+			cin>>l[idx];
+		}
+	}
+	void eraseById(string id)
+	{
+		int idx;
+		idx = findById(id);
+		if(idx==-1) cout<<"\nKhong co thong tin hoc sinh can tim!";
+		else l.erase(l.begin()+idx);
+	}
+	void printInfoByName(string name)
+	{
+		int idx;
+		idx = findByName(name);
+		if(idx==-1) cout<<"\nKhong co thong tin hoc sinh can tim!";
+		else
+		{
+			cout<<"\nThong tin hoc sinh\n";
+			cout<<l[idx];
+			cout<<"\n";
+		}
+	}
 	friend istream& operator>>(istream &is, danh_sach &ds)
 	{
 		int n;
